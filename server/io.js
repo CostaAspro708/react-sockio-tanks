@@ -13,9 +13,16 @@ module.exports = function(socketIO){
             data.heading = 90;
             players.push(data);
             console.log(players);
-            socket.emit('newPlayerResponse', players);
+            socketIO.emit('newPlayerResponse', players);
         });
-    
+        
+        socket.on('disconnect', () => {
+            console.log("user disconnected");
+            players = players.filter((player) => player.socketID !== socket.id);
+            console.log(players);
+            socketIO.emit('newPlayerResponse', players);
+            //socket.disconnect();
+        });
     
     });
 
