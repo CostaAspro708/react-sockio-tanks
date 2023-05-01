@@ -5,13 +5,16 @@ import Canvas from './Canvas';
 const GameWindow = ({ socket }) => {
     const [coordinates, setCoordinates] = useState([]);
 
+    //Run everytime coordinates change. 
     useEffect(() => {
-        setCoordinates(...coordinates, {x: 100,y: 100})
-    }, []);
+        socket.on('newPlayerResponse', (data) => {
+            setCoordinates(data);
+        });
+    }, [socket, coordinates]);
 
   return (
     <div>
-        <Canvas coordinates={coordinates} height={480} width={640} />;    
+        <Canvas coordinates={coordinates} height={480} width={640} socket={socket}/>;    
     </div>
   );
 };

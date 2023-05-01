@@ -1,6 +1,7 @@
 require("dotenv").config()
 
 let players = [];
+let vel = 1;
 
 module.exports = function(socketIO){
 
@@ -12,18 +13,44 @@ module.exports = function(socketIO){
             data.y =  Math.floor(Math.random() * process.env.CANVAS_HEIGHT);
             data.heading = 90;
             players.push(data);
-            console.log(players);
+            // players[socket.id] = data;
             socketIO.emit('newPlayerResponse', players);
         });
         
-        socket.on('disconnect', () => {
-            console.log("user disconnected");
-            players = players.filter((player) => player.socketID !== socket.id);
+        socket.on('userCommands', (data) => {
             console.log(players);
+            let obj = players.find((o, i) => {
+                if (o.socketID === socket.id) {
+                    // players[i] = { name: 'new string', value: 'this', other: 'that' };
+                    if(data.up){
+                        players[i].y += vel;  
+                    }
+                    if(data.down){
+                        players[i].y -= vel;  
+        
+                    }
+                    if(data.left){
+                        players[i].x -= vel;  
+                    }
+                    if(data.right){
+                        players[i].x += vel;  
+                    }
+                    return true; // stop searching
+                }
+            });
+            console.log(players);
+            
             socketIO.emit('newPlayerResponse', players);
-            //socket.disconnect();
+            //players[socket.id];
         });
-    
+
+        socket.on('disconnect', () => {
+            players = players.filter((player) => player.socketID !== socket.id);
+            socketIO.emit('newPlayerResponse', players);
+            socket.disconnect();
+        });
+        
+        
     });
 
 
