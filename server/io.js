@@ -1,7 +1,8 @@
 require("dotenv").config()
 
 let players = [];
-let vel = 1;
+let player_vel = 2;
+let player_rot_vel = 1;
 
 module.exports = function(socketIO){
 
@@ -21,19 +22,18 @@ module.exports = function(socketIO){
             console.log(players);
             let obj = players.find((o, i) => {
                 if (o.socketID === socket.id) {
-                    // players[i] = { name: 'new string', value: 'this', other: 'that' };
                     if(data.up){
-                        players[i].y += vel;  
+                        players[i].y -= player_vel;  
                     }
                     if(data.down){
-                        players[i].y -= vel;  
+                        players[i].y += player_vel;  
         
                     }
                     if(data.left){
-                        players[i].x -= vel;  
+                        players[i].heading -= player_rot_vel;  
                     }
                     if(data.right){
-                        players[i].x += vel;  
+                        players[i].heading += player_rot_vel;  
                     }
                     return true; // stop searching
                 }

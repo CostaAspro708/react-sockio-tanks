@@ -7,10 +7,27 @@ const SVG_PATH = new Path2D(heartSVG);
 
 function drawPlayers(ctx, coordinates){
     //clear cavas to remove previous state.
-    ctx.clearRect(0, 0, 640, 480);
+    // Store the current transformation matrix
+    ctx.reset();
+    console.log("clearing");
+    console.log(coordinates);
     //for each player coordinates draw the players
     coordinates.forEach(location => {
-        ctx.fillRect(location.x, location.y, 20, 20)
+
+        ctx.save();
+
+        ctx.translate(location.x + 20/2, location.y + 20/2 );
+        
+        // rotate the rect
+        ctx.rotate(location.heading * Math.PI / 180);
+
+        ctx.rect( -20/2, -20/2, 20,20);
+
+        ctx.fillStyle="gold";
+        ctx.fill();
+        ctx.restore();
+
+
     });
 }
 
