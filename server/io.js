@@ -2,7 +2,7 @@ require("dotenv").config()
 
 let players = [];
 let player_vel = 2;
-let player_rot_vel = 1;
+let player_rot_vel = 2;
 
 module.exports = function(socketIO){
 
@@ -23,11 +23,12 @@ module.exports = function(socketIO){
             let obj = players.find((o, i) => {
                 if (o.socketID === socket.id) {
                     if(data.up){
-                        players[i].y -= player_vel;  
-                    }
+                        players[i].x -= player_vel * Math.sin(players[i].heading * Math.PI / 180);
+                        players[i].y += player_vel * Math.cos(players[i].heading * Math.PI / 180);
+                    }   
                     if(data.down){
-                        players[i].y += player_vel;  
-        
+                        players[i].x += player_vel * Math.sin(players[i].heading * Math.PI / 180);
+                        players[i].y -= player_vel * Math.cos(players[i].heading * Math.PI / 180);
                     }
                     if(data.left){
                         players[i].heading -= player_rot_vel;  
@@ -38,7 +39,6 @@ module.exports = function(socketIO){
                     return true; // stop searching
                 }
             });
-            console.log(players);
             
             socketIO.emit('newPlayerResponse', players);
             //players[socket.id];

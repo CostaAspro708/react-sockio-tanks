@@ -4,7 +4,14 @@ import PropTypes from "prop-types";
 const heartSVG = "M0 200 v-200 h200 a100,100 90 0,1 0,200 a100,100 90 0,1 -200,0 z"
 const SVG_PATH = new Path2D(heartSVG);
 
-
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+  }
+  
 function drawPlayers(ctx, coordinates){
     //clear cavas to remove previous state.
     // Store the current transformation matrix
