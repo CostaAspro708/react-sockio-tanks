@@ -4,7 +4,7 @@ let players = [];
 let bullets = [];
 let player_vel = 2;
 let player_rot_vel = 3;
-
+let bullet_vel = 2;
 module.exports = function(socketIO){
 
     socketIO.on('connection', (socket) => {
@@ -20,7 +20,6 @@ module.exports = function(socketIO){
         });
         
         socket.on('userCommands', (data) => {
-            console.log(players);
             let obj = players.find((o, i) => {
                 if (o.socketID === socket.id) {
                     if(data.up){
@@ -49,12 +48,11 @@ module.exports = function(socketIO){
             //console.log(data);
             let obj = players.find((o, i) => {
                 if (o.socketID === socket.id) {
-                    console.log(players[i]);
-                    players[i].heading += player_rot_vel;
                     //create bullet with same location as player and given angle.
-                    let bullet = {x: players[i].x, y: players[i].y, angle: data};
+                    let bullet = {x: players[i].x + 20/2, y: players[i].y + 20/2, angle: data};
                     console.log(bullet);
-                    //bullets.push();
+                    socketIO.emit('newBulletResponse', bullets);
+                    bullets.push(bullet);
                     return true; // stop searching
                 }
             });
@@ -68,12 +66,16 @@ module.exports = function(socketIO){
         });
         
         function handleBullets(){
-
-            socketIO.emit('newBulletResponse', bullets);
-            //console.log("this is a test");
+            if(bullets.length > 0){
+                bullets.forEach(bullet => {
+                    bullet.x += bullet_vel * Math.sin((90+bullet.angle) * Math.PI / 180);
+                    bullet.y -= bullet_vel * Math.cos((90+bullet.angle) * Math.PI / 180);
+                });
+                socketIO.emit('newBulletResponse', bullets);
+            }
         }
 
-        setInterval(handleBullets, 1000);
+        setInterval(handleBullets, 20);
     });
 
 
