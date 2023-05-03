@@ -1,8 +1,9 @@
 require("dotenv").config()
 
 let players = [];
+let bullets = [];
 let player_vel = 2;
-let player_rot_vel = 2;
+let player_rot_vel = 3;
 
 module.exports = function(socketIO){
 
@@ -44,13 +45,35 @@ module.exports = function(socketIO){
             //players[socket.id];
         });
 
+        socket.on('newBullet', (data) => {
+            //console.log(data);
+            let obj = players.find((o, i) => {
+                if (o.socketID === socket.id) {
+                    console.log(players[i]);
+                    players[i].heading += player_rot_vel;
+                    //create bullet with same location as player and given angle.
+                    let bullet = {x: players[i].x, y: players[i].y, angle: data};
+                    console.log(bullet);
+                    //bullets.push();
+                    return true; // stop searching
+                }
+            });
+
+        });
+
         socket.on('disconnect', () => {
             players = players.filter((player) => player.socketID !== socket.id);
             socketIO.emit('newPlayerResponse', players);
             socket.disconnect();
         });
         
-        
+        function handleBullets(){
+
+            socketIO.emit('newBulletResponse', bullets);
+            //console.log("this is a test");
+        }
+
+        setInterval(handleBullets, 1000);
     });
 
 
